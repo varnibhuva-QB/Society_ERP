@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ baseURL: 'https://society-erp.onrender.com/api' });
 API.interceptors.request.use(cfg => {
   const token = localStorage.getItem('token');
   if (token) cfg.headers.Authorization = `Bearer ${token}`;
@@ -57,32 +57,32 @@ function Sidebar({ active, setActive }) {
     // Visitor Approval for all members
     { id: 'visitor-approval', label: 'Visitor Approvals', icon: '👤' },
   ];
-  
+
   // Maintenance Bills & Payments - Admin/Chairman only
   const showFinanceMenu = ['admin', 'chairman'].includes(user?.role);
-  
+
   if (showFinanceMenu) {
     items.push({ id: 'billing', label: 'Maintenance Bills', icon: '📋' });
     items.push({ id: 'payments', label: 'Payments', icon: '💳' });
   }
-  
+
   // Security-only items (Create Visitor Request & Security Monitor)
   const isSecurityUser = ['admin', 'chairman', 'security'].includes(user?.role);
-  
+
   if (isSecurityUser) {
     items.push({ id: 'visitor-request', label: 'Create Visitor Request', icon: '📝' });
     items.push({ id: 'security-panel', label: 'Security Monitor', icon: '🛡️' });
   }
-  
+
   // Chairman/Admin items
   if (showFinanceMenu) {
     items.push({ id: 'funds', label: 'Society Funds', icon: '💰' });
     items.push({ id: 'treasurer', label: 'Treasurer Panel', icon: '📊' });
   }
-  
+
   // Settings - Always last for all users
   items.push({ id: 'settings', label: 'Settings', icon: '⚙️' });
-  
+
   return (
     <>
       <aside style={{ width: 220, background: '#1a2744', display: 'flex', flexDirection: 'column', height: '100vh', flexShrink: 0 }}>
@@ -143,10 +143,10 @@ function StatCard({ label, value, sub, color }) {
     red: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)'
   };
   return (
-    <div style={{ 
+    <div style={{
       background: bgGradients[color],
-      borderRadius: 16, 
-      padding: 20, 
+      borderRadius: 16,
+      padding: 20,
       border: `1.5px solid ${colors[color]}20`,
       borderTop: `4px solid ${colors[color]}`,
       boxShadow: `0 4px 15px ${colors[color]}15`,
@@ -211,14 +211,14 @@ function PasswordInput({ label, value, onChange, ...props }) {
     <div style={{ marginBottom: 14 }}>
       {label && <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#374151' }}>{label}</label>}
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        <input 
-          type={showPassword ? 'text' : 'password'} 
-          value={value} 
+        <input
+          type={showPassword ? 'text' : 'password'}
+          value={value}
           onChange={onChange}
-          style={{ width: '100%', padding: '9px 12px', paddingRight: 40, border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} 
+          style={{ width: '100%', padding: '9px 12px', paddingRight: 40, border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
           {...props}
         />
-        <button 
+        <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           style={{ position: 'absolute', right: 10, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: '#64748b' }}
@@ -267,7 +267,7 @@ function Dashboard({ setActive }) {
   const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '', newPasswordConfirm: '' });
   const [pwdError, setPwdError] = useState('');
 
-  useEffect(() => { API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => {}); }, []);
+  useEffect(() => { API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => { }); }, []);
 
   // Sync password modal with user state changes
   useEffect(() => {
@@ -345,7 +345,7 @@ function Dashboard({ setActive }) {
       <Card title="Quick Shortcuts">
         <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
           {filteredShortcuts.map(s => (
-            <div key={s.action} onClick={() => setActive(s.action)} style={{ 
+            <div key={s.action} onClick={() => setActive(s.action)} style={{
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               borderRadius: 12,
               padding: 18,
@@ -374,14 +374,14 @@ function Dashboard({ setActive }) {
         <Card title="📝 Recent Notices">
           <div style={{ padding: 16 }}>
             {stats?.recentNotices?.slice(0, 4).map(n => (
-              <div 
-                key={n.notice_id} 
+              <div
+                key={n.notice_id}
                 onClick={() => { setSelectedNotice(n); setNoticeModal(true); }}
-                style={{ 
-                  padding: '12px 14px', 
+                style={{
+                  padding: '12px 14px',
                   background: n.priority === 'high' ? 'linear-gradient(135deg,#fef2f2,#ffe0e0)' : 'linear-gradient(135deg,#eff6ff,#dbeafe)',
-                  borderRadius: 10, 
-                  borderLeft: `4px solid ${n.priority === 'high' ? '#ef4444' : '#3b82f6'}`, 
+                  borderRadius: 10,
+                  borderLeft: `4px solid ${n.priority === 'high' ? '#ef4444' : '#3b82f6'}`,
                   marginBottom: 10,
                   cursor: 'pointer',
                   transition: 'all .2s',
@@ -440,7 +440,7 @@ function Dashboard({ setActive }) {
         )}
       </Modal>
 
-      <Modal open={pwdModal} onClose={() => {}} title="🔐 Change Your Password">
+      <Modal open={pwdModal} onClose={() => { }} title="🔐 Change Your Password">
         <div style={{ width: 400 }}>
           <div style={{ background: '#fef3c7', color: '#92400e', padding: 12, borderRadius: 8, marginBottom: 16, fontSize: 12 }}>
             ⚠️ For security, you must change your password on your first login.
@@ -470,7 +470,7 @@ function Members({ setActive }) {
   const canAdd = ['admin', 'chairman'].includes(user?.role);
   const canDelete = ['admin', 'chairman'].includes(user?.role);
 
-  const load = () => API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => {});
+  const load = () => API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => { });
   useEffect(() => { load(); }, []);
 
   const handlePhotoUpload = (e) => {
@@ -492,8 +492,8 @@ function Members({ setActive }) {
   const save = async () => {
     setLoading(true);
     setSuccess('');
-    try { 
-      await API.post('/members', form); 
+    try {
+      await API.post('/members', form);
       setSuccess(`Member ${form.name} added! Default password: App@123 (must change on first login)`);
       setForm({ name: '', email: '', contact_number: '', flat_no: '', blood_group: '', role: 'member', is_security: false, photo_url: '' });
       setPhotoPreview('');
@@ -555,7 +555,7 @@ function Members({ setActive }) {
       {canAdd && <Modal open={modal} onClose={() => setModal(false)} title="Add New Member">
         {success && <div style={{ background: '#dcfce7', color: '#15803d', padding: '12px 14px', borderRadius: 8, marginBottom: 16, fontSize: 12 }}>✅ {success}</div>}
         <div style={{ background: '#eff6ff', color: '#1e40af', padding: '12px 14px', borderRadius: 8, marginBottom: 16, fontSize: 12 }}>ℹ️ Default password: App@123 (member must change on first login)</div>
-        
+
         {/* Photo Upload Section */}
         <div style={{ marginBottom: 16, padding: 14, background: '#f8fafc', borderRadius: 8, border: '2px dashed #e2e8f0' }}>
           <label style={{ display: 'block', fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#374151' }}>📷 Profile Photo</label>
@@ -596,7 +596,7 @@ function Members({ setActive }) {
 }
 
 function Notices({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const { user } = useAuth();
   const [notices, setNotices] = useState([]);
   const [modal, setModal] = useState(false);
@@ -605,7 +605,7 @@ function Notices({ setActive }) {
   const [form, setForm] = useState({ title: '', description: '', priority: 'normal' });
   const canPost = ['admin', 'chairman'].includes(user?.role);
 
-  const load = () => API.get('/notices').then(r => setNotices(r.data)).catch(() => {});
+  const load = () => API.get('/notices').then(r => setNotices(r.data)).catch(() => { });
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -628,14 +628,14 @@ function Notices({ setActive }) {
       </div>
       <div style={{ display: 'grid', gap: 14 }}>
         {notices.map(n => (
-          <div 
-            key={n.notice_id} 
+          <div
+            key={n.notice_id}
             onClick={() => { setSelectedNotice(n); setDetailModal(true); }}
-            style={{ 
-              background: '#fff', 
-              borderRadius: 12, 
-              border: '1px solid #e2e8f0', 
-              padding: 18, 
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              border: '1px solid #e2e8f0',
+              padding: 18,
               borderLeft: `4px solid ${n.priority === 'high' ? '#ef4444' : '#3b82f6'}`,
               cursor: 'pointer',
               transition: 'all .2s',
@@ -695,14 +695,14 @@ function Notices({ setActive }) {
 }
 
 function Billing({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [bills, setBills] = useState([]);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ amount: 2500, due_date: '', month_year: '', description: '' });
   const { user } = useAuth();
   const canManage = ['admin', 'chairman'].includes(user?.role);
 
-  const load = () => API.get('/billing').then(r => setBills(r.data)).catch(() => {});
+  const load = () => API.get('/billing').then(r => setBills(r.data)).catch(() => { });
   useEffect(() => { load(); }, []);
 
   const markPaid = async (bill_id) => {
@@ -778,15 +778,15 @@ function Billing({ setActive }) {
 }
 
 function Bookings({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [bookings, setBookings] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ amenity_type: 'garden', booking_date: '', start_time: '08:00', end_time: '10:00', amount: 100 });
 
   const load = () => {
-    API.get('/bookings').then(r => setBookings(r.data)).catch(() => {});
-    API.get('/amenities').then(r => setAmenities(r.data || [])).catch(() => {});
+    API.get('/bookings').then(r => setBookings(r.data)).catch(() => { });
+    API.get('/amenities').then(r => setAmenities(r.data || [])).catch(() => { });
   };
   useEffect(() => { load(); }, []);
 
@@ -817,12 +817,12 @@ function Bookings({ setActive }) {
   };
 
   const save = async () => {
-    try { 
+    try {
       const payload = { ...form, amount: calculateAmount() };
-      await API.post('/bookings', payload); 
-      setModal(false); 
+      await API.post('/bookings', payload);
+      setModal(false);
       setForm({ amenity_type: form.amenity_type, booking_date: '', start_time: '08:00', end_time: '10:00', amount: 100 });
-      load(); 
+      load();
     } catch (e) { alert(e.response?.data?.error || 'Booking failed!'); }
   };
 
@@ -843,7 +843,7 @@ function Bookings({ setActive }) {
               {a.type === 'garden' ? '🌳' : a.type === 'terrace' ? '🏠' : a.type === 'parking' ? '🅿️' : a.type === 'gym' ? '💪' : a.type === 'pool' ? '🏊' : '🏢'}
             </div>
             <div style={{ fontWeight: 700, fontSize: 16, color: form.amenity_type === a.type ? '#ffffff' : '#0f172a' }}>{a.name}</div>
-            <div style={{ fontSize: 13, color: form.amenity_type === a.type ? '#f0f9ff' : '#64748b', marginTop: 4, fontWeight: 600 }}>₹{a.rent_amount}<span style={{fontSize: 11}}>/hr</span></div>
+            <div style={{ fontSize: 13, color: form.amenity_type === a.type ? '#f0f9ff' : '#64748b', marginTop: 4, fontWeight: 600 }}>₹{a.rent_amount}<span style={{ fontSize: 11 }}>/hr</span></div>
           </div>
         )) : <div style={{ gridColumn: '1/-1', textAlign: 'center', color: '#94a3b8', padding: 24 }}>Loading amenities...</div>}
       </div>
@@ -904,7 +904,7 @@ function Bookings({ setActive }) {
             <div style={{ fontSize: 28, fontWeight: 800, color: '#0ea5e9' }}>₹{calculateAmount()}</div>
           </div>
         </div>
-        <div style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%)', borderRadius: 12, padding: 14, fontSize: 13, color: '#15803d', marginTop: 16, border: '1.5px solid #86efac', display: 'flex', gap: 10, alignItems: 'center' }}><span style={{fontSize: 16}}>🔒</span> Payment via Razorpay required to confirm booking.</div>
+        <div style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%)', borderRadius: 12, padding: 14, fontSize: 13, color: '#15803d', marginTop: 16, border: '1.5px solid #86efac', display: 'flex', gap: 10, alignItems: 'center' }}><span style={{ fontSize: 16 }}>🔒</span> Payment via Razorpay required to confirm booking.</div>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
           <Btn variant="outline" onClick={() => setModal(false)}>Cancel</Btn>
           <Btn onClick={save}>Confirm & Pay</Btn>
@@ -915,14 +915,14 @@ function Bookings({ setActive }) {
 }
 
 function Contacts({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ name: '', service_type: 'milkman', phone_number: '', description: '', available_time: '' });
   const icons = { milkman: '🥛', laundry: '👕', plumber: '🔧', electrician: '⚡', cab: '🚕', pharmacy: '💊', carpenter: '🔨', security: '👮' };
 
-  const load = () => API.get('/contacts').then(r => setContacts(r.data)).catch(() => {});
+  const load = () => API.get('/contacts').then(r => setContacts(r.data)).catch(() => { });
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -971,23 +971,23 @@ function Contacts({ setActive }) {
 }
 
 function Vehicles({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [myVehicles, setMyVehicles] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ vehicle_type: 'Car', vehicle_number: '' });
 
   const load = () => {
-    API.get('/vehicles/my').then(r => setMyVehicles(r.data)).catch(() => {});
-    API.get('/vehicles/all').then(r => setAllVehicles(r.data)).catch(() => {});
+    API.get('/vehicles/my').then(r => setMyVehicles(r.data)).catch(() => { });
+    API.get('/vehicles/all').then(r => setAllVehicles(r.data)).catch(() => { });
   };
 
   useEffect(() => { load(); }, []);
 
   const save = async () => {
-    try { 
-      await API.post('/vehicles', form); 
-      setModal(false); 
+    try {
+      await API.post('/vehicles', form);
+      setModal(false);
       setForm({ vehicle_type: 'Car', vehicle_number: '' });
       load();
     } catch (e) { alert('Error'); }
@@ -1062,9 +1062,9 @@ function Vehicles({ setActive }) {
 }
 
 function Payments({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [payments, setPayments] = useState([]);
-  useEffect(() => { API.get('/payments').then(r => setPayments(r.data)).catch(() => {}); }, []);
+  useEffect(() => { API.get('/payments').then(r => setPayments(r.data)).catch(() => { }); }, []);
   return (
     <Card title="Payment History">
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -1089,7 +1089,7 @@ function Payments({ setActive }) {
 }
 
 function Settings({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const { user, updateUser, logout } = useAuth();
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -1236,8 +1236,8 @@ function Settings({ setActive }) {
             {availableShortcuts.map(s => (
               s.enabled && (
                 <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: 8, borderRadius: 6, background: '#f8fafc', border: '1px solid #e2e8f0', fontSize: 13 }}>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={shortcutsConfig[s.id] !== false}
                     onChange={() => toggleShortcut(s.id)}
                     style={{ cursor: 'pointer', width: 18, height: 18 }}
@@ -1288,7 +1288,7 @@ function Settings({ setActive }) {
 }
 
 function FamilyMembers({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const { user } = useAuth();
   const [familyMembers, setFamilyMembers] = useState([]);
   const [modal, setModal] = useState(false);
@@ -1300,7 +1300,7 @@ function FamilyMembers({ setActive }) {
       API.get(`/family-members?member_id=${user.member_id}`).then(r => setFamilyMembers(r.data || [])).catch(() => setFamilyMembers([]));
     }
   };
-  
+
   useEffect(() => { load(); }, [user?.member_id]);
 
   const save = async () => {
@@ -1385,7 +1385,7 @@ function FamilyMembers({ setActive }) {
 }
 
 function Amenities({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const { user } = useAuth();
   const [amenities, setAmenities] = useState([]);
   const [modal, setModal] = useState(false);
@@ -1394,7 +1394,7 @@ function Amenities({ setActive }) {
   const canManage = ['admin', 'chairman'].includes(user?.role);
 
   const loadAmenities = () => {
-    API.get('/amenities').then(r => setAmenities(r.data)).catch(() => {});
+    API.get('/amenities').then(r => setAmenities(r.data)).catch(() => { });
   };
 
   useEffect(() => {
@@ -1446,7 +1446,7 @@ function Amenities({ setActive }) {
       <Card title={`🏢 Premium Amenities (${amenities.length})`}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24, padding: 28 }}>
           {amenities.map(a => (
-            <div key={a.amenity_id} style={{ 
+            <div key={a.amenity_id} style={{
               background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
               borderRadius: 24,
               padding: 28,
@@ -1471,7 +1471,7 @@ function Amenities({ setActive }) {
               </div>
               <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 8, color: '#0f172a', letterSpacing: '-0.5px' }}>{a.name}</div>
               <div style={{ fontSize: 13, color: '#64748b', marginBottom: 16, lineHeight: 1.6, height: 36 }}>{a.description}</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, fontWeight: 800, color: '#0ea5e9', marginBottom: 16, fontSize: 28 }}><span style={{fontSize: 20}}>₹</span>{a.rent_amount}<span style={{fontSize: 12, fontWeight: 600, color: '#64748b', marginLeft: 4}}>/hour</span></div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, fontWeight: 800, color: '#0ea5e9', marginBottom: 16, fontSize: 28 }}><span style={{ fontSize: 20 }}>₹</span>{a.rent_amount}<span style={{ fontSize: 12, fontWeight: 600, color: '#64748b', marginLeft: 4 }}>/hour</span></div>
               {canManage && (
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Btn variant="outline" sm onClick={() => handleEdit(a)}>Edit</Btn>
@@ -1499,7 +1499,7 @@ function Amenities({ setActive }) {
 }
 
 function SocietyFunds({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [memberModal, setMemberModal] = useState(false);
@@ -1508,9 +1508,9 @@ function SocietyFunds({ setActive }) {
   const canManage = ['admin', 'chairman'].includes(user?.role);
 
   useEffect(() => {
-    API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => {});
+    API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => { });
     if (memberModal) {
-      API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => {});
+      API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => { });
     }
   }, [memberModal]);
 
@@ -1520,7 +1520,7 @@ function SocietyFunds({ setActive }) {
       await API.delete(`/members/${selectedMember}`);
       setMemberModal(false);
       setSelectedMember('');
-      API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => {});
+      API.get('/members').then(r => setMembers(r.data.members || [])).catch(() => { });
     } catch (e) {
       alert(e.response?.data?.error || 'Error removing member');
     }
@@ -1596,7 +1596,7 @@ function VisitorApproval({ setActive }) {
       const histData = histRes.data?.visitors || histRes.data || [];
       setPending(Array.isArray(pendData) ? pendData : []);
       setHistory(Array.isArray(histData) ? histData : []);
-    } catch (e) { 
+    } catch (e) {
       console.error(e);
       setPending([]);
       setHistory([]);
@@ -1845,7 +1845,7 @@ function VisitorRequest({ setActive }) {
         {/* Camera/Photo Capture Section */}
         <div style={{ marginBottom: 20, borderTop: '2px solid #e2e8f0', paddingTop: 20 }}>
           <label style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 12, display: 'block' }}>📷 Visitor Photo (Optional)</label>
-          
+
           {!cameraMode ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <button onClick={startCamera} style={{ background: '#0ea5e9', color: '#fff', border: 'none', padding: 12, borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }} onMouseOver={e => e.target.style.background = '#0284c7'} onMouseOut={e => e.target.style.background = '#0ea5e9'}>
@@ -2050,8 +2050,8 @@ function SecurityGuardPanel({ setActive }) {
 
       {/* Tab Buttons */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-        <button 
-          onClick={() => setTab('pending')} 
+        <button
+          onClick={() => setTab('pending')}
           style={{
             padding: '12px 20px',
             background: tab === 'pending' ? 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)' : '#f3f4f6',
@@ -2071,8 +2071,8 @@ function SecurityGuardPanel({ setActive }) {
         >
           👤 Pending Approvals <span style={{ background: 'rgba(255,255,255,0.3)', padding: '2px 8px', borderRadius: 20, fontSize: 12, fontWeight: 600 }}>{pending.length}</span>
         </button>
-        <button 
-          onClick={() => setTab('approved')} 
+        <button
+          onClick={() => setTab('approved')}
           style={{
             padding: '12px 20px',
             background: tab === 'approved' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#f3f4f6',
@@ -2177,14 +2177,14 @@ function SecurityGuardPanel({ setActive }) {
 }
 
 function TreasurerPanel({ setActive }) {
-  setActive = setActive || (() => {});
+  setActive = setActive || (() => { });
   const [stats, setStats] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     Promise.all([
-      API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => {}),
-      API.get('/payments').then(r => setTransactions(Array.isArray(r.data) ? r.data : r.data.payments || [])).catch(() => {})
+      API.get('/dashboard/stats').then(r => setStats(r.data)).catch(() => { }),
+      API.get('/payments').then(r => setTransactions(Array.isArray(r.data) ? r.data : r.data.payments || [])).catch(() => { })
     ]);
   }, []);
 
@@ -2313,7 +2313,7 @@ function AppInner() {
         const pending = res.data?.filter(v => v.status === 'pending') || [];
         if (pending.length > unreadCount) {
           // New notification arrived
-          audioRef.play().catch(() => {});
+          audioRef.play().catch(() => { });
           setNotifications(pending);
           setUnreadCount(pending.length);
         } else {
