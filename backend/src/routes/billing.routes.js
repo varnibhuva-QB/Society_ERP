@@ -1,0 +1,12 @@
+const express = require('express');
+const { authenticate, isAdminOrChairman } = require('../middleware/auth.middleware');
+const { billingController } = require('../controllers/index');
+const router = express.Router();
+router.use(authenticate);
+router.get('/', billingController.getAll);
+router.get('/stats', billingController.getStats);
+router.get('/:id', billingController.getById);
+router.post('/generate', isAdminOrChairman, billingController.generateBills);
+router.post('/', isAdminOrChairman, billingController.createBill);
+router.patch('/:id/pay', billingController.markPaid);
+module.exports = router;

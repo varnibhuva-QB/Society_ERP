@@ -1,0 +1,11 @@
+const express = require('express');
+const { authenticate } = require('../middleware/auth.middleware');
+const { bookingController } = require('../controllers/index');
+const router = express.Router();
+router.use(authenticate);
+router.get('/', bookingController.getAll);
+router.get('/availability', bookingController.getAvailability);
+router.post('/', bookingController.create);
+router.patch('/:id/cancel', bookingController.cancel);
+router.delete('/:id', bookingController.cancel);
+module.exports = router;

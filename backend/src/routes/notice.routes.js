@@ -1,0 +1,11 @@
+const express = require('express');
+const { authenticate, isAdminOrChairman } = require('../middleware/auth.middleware');
+const { noticeController } = require('../controllers/index');
+const router = express.Router();
+router.use(authenticate);
+router.get('/', noticeController.getAll);
+router.get('/:id', noticeController.getById);
+router.post('/', isAdminOrChairman, noticeController.create);
+router.put('/:id', isAdminOrChairman, noticeController.update);
+router.delete('/:id', isAdminOrChairman, noticeController.delete);
+module.exports = router;

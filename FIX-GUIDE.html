@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SocietyPro ERP — Fix Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:32px}
+.container{max-width:860px;margin:0 auto}
+h1{font-size:24px;color:#fff;margin-bottom:4px}
+.subtitle{color:#64748b;font-size:14px;margin-bottom:32px}
+.step{background:#1e293b;border-radius:12px;border:1px solid #334155;padding:24px;margin-bottom:20px}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.step-num{width:32px;height:32px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.step-title{font-size:16px;font-weight:600;color:#fff}
+.step-desc{font-size:13px;color:#94a3b8;margin-top:2px}
+.cmd{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;font-family:'Consolas','Courier New',monospace;font-size:13px;color:#7dd3fc;margin:10px 0;position:relative;cursor:pointer;transition:border-color .2s}
+.cmd:hover{border-color:#3b82f6}
+.cmd::after{content:'Click to copy';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;color:#475569;font-family:system-ui}
+.cmd.copied{border-color:#10b981}
+.cmd.copied::after{content:'✅ Copied!';color:#10b981}
+.note{background:#1a2744;border:1px solid #1d4ed8;border-radius:8px;padding:12px 16px;font-size:13px;color:#93c5fd;margin:10px 0}
+.warn{background:#1c1407;border:1px solid #92400e;border-radius:8px;padding:12px 16px;font-size:13px;color:#fcd34d;margin:10px 0}
+.success{background:#052e16;border:1px solid #166534;border-radius:8px;padding:12px 16px;font-size:13px;color:#86efac;margin:10px 0}
+.inline{display:inline;background:#0f172a;padding:2px 8px;border-radius:4px;font-family:monospace;color:#7dd3fc;font-size:12px}
+ul{padding-left:20px;color:#94a3b8;font-size:13px;line-height:2}
+li{margin:2px 0}
+.divider{border:none;border-top:1px solid #1e293b;margin:24px 0}
+.tag{display:inline-block;background:#1d4ed8;color:#bfdbfe;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle}
+a{color:#60a5fa}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🏘️ SocietyPro ERP — Fix Guide</h1>
+  <p class="subtitle">ERR_CONNECTION_REFUSED fix · Server: SERP · ADMIN\SQLEXPRESS</p>
+
+  <div class="note">
+    <strong>Root Cause:</strong> The error <code class="inline">ERR_CONNECTION_REFUSED</code> on the login page means your React frontend cannot reach the backend API at <code class="inline">http://localhost:5000</code>. Either the backend hasn't been started yet, or SQL Server failed to connect and crashed it.
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Verify SQL Server is Running</div>
+        <div class="step-desc">Press Win+R → type services.msc → find these services</div>
+      </div>
+    </div>
+    <ul>
+      <li>Find <strong>SQL Server (SQLEXPRESS)</strong> → must be <strong style="color:#86efac">Running</strong></li>
+      <li>Find <strong>SQL Server Browser</strong> → must be <strong style="color:#86efac">Running</strong> (right-click → Start)</li>
+    </ul>
+    <div class="warn">If SQL Server Browser is disabled: right-click → Properties → Startup type → Automatic → then Start</div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Create the Database in SSMS</div>
+        <div class="step-desc">Open SSMS → connect to ADMIN\SQLEXPRESS with Windows Auth</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#94a3b8;margin-bottom:10px">Open <strong>setup.sql</strong> from the downloaded zip (backend/sql/setup.sql) and press F5. Or run this quick version:</p>
+    <div class="cmd" onclick="copyCmd(this)">CREATE DATABASE SocietyERP; GO</div>
+    <div class="success">After running setup.sql, you should see 8 tables in SocietyERP database.</div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Install & Start Backend <span class="tag">MOST IMPORTANT</span></div>
+        <div class="step-desc">Open Command Prompt or PowerShell in the backend folder</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#94a3b8;margin-bottom:8px">Navigate to your backend folder:</p>
+    <div class="cmd" onclick="copyCmd(this)">cd C:\path\to\society-erp\backend</div>
+    <p style="font-size:13px;color:#94a3b8;margin:10px 0 8px">Run these commands ONE BY ONE:</p>
+    <div class="cmd" onclick="copyCmd(this)">npm install</div>
+    <div class="cmd" onclick="copyCmd(this)">npx prisma generate</div>
+    <div class="cmd" onclick="copyCmd(this)">node src/prisma/seed.js</div>
+    <div class="cmd" onclick="copyCmd(this)">npm run dev</div>
+    <div class="success">✅ You should see: "SocietyPro ERP Backend RUNNING on port 5000"</div>
+    <div class="warn">Keep this terminal OPEN while using the app. Do not close it!</div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">Start Frontend (separate terminal)</div>
+        <div class="step-desc">Open a NEW Command Prompt window for the frontend</div>
+      </div>
+    </div>
+    <div class="cmd" onclick="copyCmd(this)">cd C:\path\to\society-erp\frontend</div>
+    <div class="cmd" onclick="copyCmd(this)">npm install</div>
+    <div class="cmd" onclick="copyCmd(this)">npm start</div>
+    <div class="success">Browser opens at http://localhost:3000 automatically.</div>
+  </div>
+
+  <!-- STEP 5: If still fails -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">Still Failing? Try SQL Auth Instead</div>
+        <div class="step-desc">Edit backend/.env and switch to SQL Server Authentication</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#94a3b8;margin-bottom:10px">In SSMS, enable SA login:</p>
+    <div class="cmd" onclick="copyCmd(this)">ALTER LOGIN sa ENABLE;
+ALTER LOGIN sa WITH PASSWORD = 'Society@2025';
+GO</div>
+    <p style="font-size:13px;color:#94a3b8;margin:10px 0 8px">Then update <strong>backend/.env</strong>:</p>
+    <div class="cmd" onclick="copyCmd(this)">DATABASE_URL="sqlserver://ADMIN\SQLEXPRESS;database=SocietyERP;user=sa;password=Society@2025;encrypt=true;trustServerCertificate=true"</div>
+    <div class="note">Also enable SQL Server Auth in SSMS: Right-click server → Properties → Security → SQL Server and Windows Authentication mode</div>
+  </div>
+
+  <!-- Login credentials -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">✓</div>
+      <div>
+        <div class="step-title">Login Credentials</div>
+        <div class="step-desc">After seeding the database</div>
+      </div>
+    </div>
+    <ul>
+      <li><strong style="color:#fff">Admin:</strong> admin@societyerp.com / Admin@123</li>
+      <li><strong style="color:#fff">Chairman:</strong> chairman@societyerp.com / Chair@123</li>
+      <li><strong style="color:#fff">Member:</strong> amit@test.com / Member@123</li>
+      <li><strong style="color:#fff">Member:</strong> varni@test.com / Member@123</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;color:#475569;font-size:12px;margin-top:32px">
+    SocietyPro ERP · Backend: localhost:5000 · Frontend: localhost:3000 · DB: SERP → SocietyERP
+  </div>
+</div>
+
+<script>
+function copyCmd(el) {
+  const text = el.innerText.replace('Click to copy','').replace('✅ Copied!','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 2000);
+  });
+}
+</script>
+</body>
+</html>

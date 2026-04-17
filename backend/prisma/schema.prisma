@@ -1,0 +1,176 @@
+// This is your Prisma schema file for SQL Server (SSMS)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  member_id              Int              @id @default(autoincrement())
+  name                   String           @db.NVarChar(100)
+  contact_number         String           @db.NVarChar(15)
+  email                  String           @unique @db.NVarChar(150)
+  blood_group            String?          @db.NVarChar(5)
+  flat_no                String           @db.NVarChar(20)
+  role                   String           @default("member") @db.NVarChar(20)
+  is_security            Boolean          @default(false)
+  password_hash          String           @db.NVarChar(255)
+  password_change_required Boolean        @default(false)
+  is_active              Boolean          @default(true)
+  photo_url              String?          @db.NVarChar(Max)
+  created_at             DateTime         @default(now())
+  updated_at             DateTime         @updatedAt
+
+  family_members FamilyMember[]
+  vehicles       Vehicle[]
+  notices        Notice[]
+  bills          MaintenanceBill[]
+  bookings       AmenityBooking[]
+  payments       Payment[]
+  contacts       ImportantContact[]
+  complaints     Complaint[]
+  visitor_approvals Visitor[] @relation("VisitorsMember")
+  visitor_requests  Visitor[] @relation("VisitorsSG")
+}
+
+model FamilyMember {
+  family_id      Int     @id @default(autoincrement())
+  member_id      Int
+  name           String  @db.NVarChar(100)
+  age            Int?
+  relationship   String  @db.NVarChar(50)
+  contact_number String? @db.NVarChar(15)
+  created_at     DateTime @default(now())
+
+  member         Member  @relation(fields: [member_id], references: [member_id], onDelete: Cascade)
+}
+
+model Vehicle {
+  vehicle_id     Int     @id @default(autoincrement())
+  member_id      Int
+  vehicle_type   String  @db.NVarChar(50)
+  vehicle_number String  @db.NVarChar(20)
+  created_at     DateTime @default(now())
+
+  member         Member  @relation(fields: [member_id], references: [member_id], onDelete: Cascade)
+}
+
+model Notice {
+  notice_id   Int      @id @default(autoincrement())
+  title       String   @db.NVarChar(200)
+  description String   @db.NVarChar(Max)
+  created_by  Int
+  priority    String   @default("normal") @db.NVarChar(20)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author      Member   @relation(fields: [created_by], references: [member_id])
+}
+
+model MaintenanceBill {
+  bill_id       Int       @id @default(autoincrement())
+  member_id     Int
+  amount        Decimal   @db.Decimal(10, 2)
+  due_date      DateTime
+  status        String    @default("unpaid") @db.NVarChar(20)
+  payment_date  DateTime?
+  description   String?   @db.NVarChar(200)
+  month_year    String    @db.NVarChar(20)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  member        Member    @relation(fields: [member_id], references: [member_id], onDelete: Cascade)
+  payment       Payment?
+}
+
+model AmenityBooking {
+  booking_id     Int      @id @default(autoincrement())
+  member_id      Int
+  amenity_type   String   @db.NVarChar(50)
+  booking_date   DateTime
+  start_time     String   @default("00:00") @db.NVarChar(10)
+  end_time       String   @default("00:00") @db.NVarChar(10)
+  payment_status String   @default("pending") @db.NVarChar(20)
+  status         String   @default("confirmed") @db.NVarChar(20)
+  amount         Decimal  @default(0) @db.Decimal(10, 2)
+  created_at     DateTime @default(now())
+
+  member         Member   @relation(fields: [member_id], references: [member_id], onDelete: Cascade)
+}
+
+model Payment {
+  payment_id     Int      @id @default(autoincrement())
+  member_id      Int
+  bill_id        Int?     @unique
+  amount         Decimal  @db.Decimal(10, 2)
+  payment_method String   @db.NVarChar(50)
+  transaction_id String?  @db.NVarChar(100)
+  status         String   @default("pending") @db.NVarChar(20)
+  remarks        String?  @db.NVarChar(200)
+  created_at     DateTime @default(now())
+
+  member         Member          @relation(fields: [member_id], references: [member_id], onDelete: NoAction, onUpdate: NoAction)
+  bill           MaintenanceBill? @relation(fields: [bill_id], references: [bill_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ImportantContact {
+  contact_id     Int      @id @default(autoincrement())
+  name           String   @db.NVarChar(100)
+  service_type   String   @db.NVarChar(50)
+  phone_number   String   @db.NVarChar(15)
+  description    String?  @db.NVarChar(300)
+  available_time String?  @db.NVarChar(100)
+  added_by       Int
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  member         Member   @relation(fields: [added_by], references: [member_id])
+}
+
+model Amenity {
+  amenity_id    Int      @id @default(autoincrement())
+  name          String   @unique @db.NVarChar(100)
+  type          String   @db.NVarChar(50)
+  rent_amount   Decimal  @db.Decimal(10, 2)
+  description   String?  @db.NVarChar(300)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Complaint {
+  complaint_id   Int      @id @default(autoincrement())
+  member_id      Int
+  title          String   @db.NVarChar(200)
+  description    String   @db.NVarChar(Max)
+  status         String   @default("pending") @db.NVarChar(20)
+  priority       String   @default("normal") @db.NVarChar(20)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  member         Member   @relation(fields: [member_id], references: [member_id], onDelete: Cascade)
+}
+
+model Visitor {
+  visitor_id      Int       @id @default(autoincrement())
+  member_id       Int
+  visitor_name    String    @db.NVarChar(100)
+  visitor_mobile  String    @db.NVarChar(15)
+  visitor_photo   String?   @db.NVarChar(Max)
+  requested_by    Int
+  status          String    @default("pending") @db.NVarChar(20)
+  approval_date   DateTime?
+  rejection_date  DateTime?
+  reason          String?   @db.NVarChar(300)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  member          Member    @relation("VisitorsMember", fields: [member_id], references: [member_id], onDelete: Cascade)
+  security_guard  Member    @relation("VisitorsSG", fields: [requested_by], references: [member_id], onDelete: NoAction, onUpdate: NoAction)
+}

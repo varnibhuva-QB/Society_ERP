@@ -1,0 +1,11 @@
+const express = require('express');
+const { authenticate } = require('../middleware/auth.middleware');
+const { vehicleController } = require('../controllers/index');
+const router = express.Router();
+router.use(authenticate);
+router.get('/all', vehicleController.getAll);
+router.get('/member/:memberId', vehicleController.getByMember);
+router.get('/my', vehicleController.getByMember);
+router.post('/', vehicleController.create);
+router.delete('/:id', vehicleController.delete);
+module.exports = router;

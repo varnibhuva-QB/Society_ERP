@@ -1,0 +1,10 @@
+const express = require('express');
+const { authenticate } = require('../middleware/auth.middleware');
+const { contactController } = require('../controllers/index');
+const router = express.Router();
+router.use(authenticate);
+router.get('/', contactController.getAll);
+router.post('/', contactController.create);
+router.put('/:id', contactController.update);
+router.delete('/:id', contactController.delete);
+module.exports = router;
